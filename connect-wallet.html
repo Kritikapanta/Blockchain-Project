@@ -8,10 +8,33 @@
 
 </head>
 <body>
-    <button id="connectWallet">Connect Wallet</button>
+    <button id="connectWallet" onclick="connectWallet()">Connect Wallet</button>
     <p id="walletAddress"></p>
 
     <script>
+        async function connectWallet(){
+            //Initialization of web3 in async 
+            const web3 = new Web3(window.ethereum);
+
+            try{
+
+                //request the account access
+                await ethereum.request({method : 'eth_requestAccounts'})
+
+                //get accounts
+                const accounts = await web3.eth.getAccounts();
+
+                //get the wallet address
+                const walletAddress = accounts[0];
+                document.getElementById('walletAddress').innerText = `Address: ${walletAddress}`;
+
+                return walletAddress;
+            } catch(error) {
+
+                alert("Could not connect to metamask!!");
+            }
+
+        }
        
     </script>
 </body>
