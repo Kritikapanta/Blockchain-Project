@@ -13,27 +13,31 @@
 
     <script>
         async function connectWallet(){
-            //Initialization of web3 in async 
-            const web3 = new Web3(window.ethereum);
+            if (typeof window.ethereum !== 'undefined'){
+                //Initialization of web3 in async 
+                const web3 = new Web3(window.ethereum);
 
-            try{
+                try{
 
-                //request the account access
-                await ethereum.request({method : 'eth_requestAccounts'})
+                    //request the account access
+                    await ethereum.request({method : 'eth_requestAccounts'})
 
-                //get accounts
-                const accounts = await web3.eth.getAccounts();
+                    //get accounts
+                    const accounts = await web3.eth.getAccounts();
 
-                //get the wallet address
-                const walletAddress = accounts[0];
-                document.getElementById('walletAddress').innerText = `Address: ${walletAddress}`;
+                    //get the wallet address
+                    const walletAddress = accounts[0];
+                    document.getElementById('walletAddress').innerText = `Address: ${walletAddress}`;
 
-                return walletAddress;
-            } catch(error) {
+                    return walletAddress;
+                } catch(error) {
 
-                alert("Could not connect to metamask!!");
+                    alert("Could not connect to metamask!!");
+                }
+            } else {
+                alert('MetaMask is not installed!');
             }
-
+        
         }
        
     </script>
