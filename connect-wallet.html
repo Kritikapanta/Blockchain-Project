@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect MetaMask</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
+
+</head>
+<body>
+    <button id="connectWallet" onclick="connectWallet()">Connect Wallet</button>
+    <p id="walletAddress"></p>
+
+    <script>
+        async function connectWallet(){
+            if (typeof window.ethereum !== 'undefined'){
+                //Initialization of web3 in async 
+                const web3 = new Web3(window.ethereum);
+
+                try{
+
+                    //request the account access
+                    await ethereum.request({method : 'eth_requestAccounts'})
+
+                    //get accounts
+                    const accounts = await web3.eth.getAccounts();
+
+                    //get the wallet address
+                    const walletAddress = accounts[0];
+                    document.getElementById('walletAddress').innerText = `Address: ${walletAddress}`;
+
+                    return walletAddress;
+                } catch(error) {
+
+                    alert("Could not connect to metamask!!");
+                }
+            } else {
+                alert('MetaMask is not installed!');
+            }
+        
+        }
+       
+    </script>
+</body>
+</html>
