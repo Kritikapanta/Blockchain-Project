@@ -1,0 +1,21 @@
+<!-- templates/upload.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload to Pinata</title>
+</head>
+<body>
+    <h1>Upload File to IPFS via Pinata</h1>
+    <form action="/upload/" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if file_hash %}
+    <p>File uploaded successfully! IPFS Hash: <a href="https://gateway.pinata.cloud/ipfs/{{ file_hash }}" target="_blank">{{ file_hash }}</a></p>
+    {% endif %}
+</body>
+</html>
