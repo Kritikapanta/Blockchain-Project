@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Evidence</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-title {
+      text-align: center;
+      color: #333;
+    }
+
+    .search-section {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-section input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .search-section button {
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .search-section button:hover {
+      background-color: #0056b3;
+    }
+
+    .evidence-details p {
+      margin: 10px 0;
+    }
+
+    .error-message {
+      color: red;
+      text-align: center;
+    }
+
+    .person-picture {
+      max-width: 150px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="page-title">View Evidence</h1>
+
+    <div class="search-section">
+      <label for="searchHash">Enter Hash ID:</label>
+      <input type="text" id="searchHash" placeholder="Enter Hash ID">
+      <button id="searchBtn">Search</button>
+    </div>
+
+    <div id="evidenceDetails" class="evidence-details" style="display: none;">
+      <h2>Evidence Details</h2>
+      <p><strong>Hash ID:</strong> <span id="hashId"></span></p>
+      <p><strong>Address (Uploader):</strong> <span id="uploaderAddress"></span></p>
+      <p><strong>Name of the Person:</strong> <span id="name"></span></p>
+      <p><strong>Date of Birth:</strong> <span id="dob"></span></p>
+      <p><strong>Nationality:</strong> <span id="nationality"></span></p>
+      <p><strong>Picture of the Person:</strong> <br>
+        <img id="picture" alt="Person's Picture" class="person-picture">
+      </p>
+      <p><strong>National ID Card Number:</strong> <span id="nationalId"></span></p>
+      <p><strong>Crime:</strong> <span id="crime"></span></p>
+      <p><strong>Description of the Case:</strong> <span id="description"></span></p>
+      <p><strong>Evidence:</strong> <span id="evidence"></span></p>
+      <p><strong>Time Stamp:</strong> <span id="timestamp"></span></p>
+    </div>
+
+    <p id="errorMessage" class="error-message" style="display: none;">No evidence found for the provided Hash ID.</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3/dist/web3.min.js"></script>
+  <script>
+    const contractAddress = "<DEPLOYED_CONTRACT_ADDRESS>";
+    const contractABI = [
+      // Replace with your contract ABI
+    ];
+
+    document.getElementById("searchBtn").addEventListener("click", async () => {
+      const hashId = document.getElementById("searchHash").value;
+
+      if (!hashId) {
+        alert("Please enter a Hash ID to search.");
+        return;
+      }
+
+      try {
+        // Connect to the blockchain
+        if (typeof window.ethereum !== "undefined") {
+          const web3 = new Web3(window.ethereum);
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+
+          const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+          // Retrieve evidence details from the blockchain
+          const details = await contract.methods.getHashDetails(hashId).call();
+
+          // Update the UI with evidence details
+          document.getElementById("hashId").textContent = details[0];
+          document.getElementById("uploaderAddress").textContent = details[1];
+          document.getElementById("timestamp").textContent = new Date(details[2] * 1000).toLocaleString();
+
+          // Simulate fetching additional details (e.g., name, picture, etc.)
+          const additionalData = fetchAdditionalDetails(hashId);
+          document.getElementById("name").textContent = additionalData.name;
+          document.getElementById("dob").textContent = additionalData.dob;
+          document.getElementById("nationality").textContent = additionalData.nationality;
+          document.getElementById("picture").src = additionalData.picture;
+          document.getElementById("nationalId").textContent = additionalData.nationalId;
+          document.getElementById("crime").textContent = additionalData.crime;
+          document.getElementById("description").textContent = additionalData.description;
+          document.getElementById("evidence").textContent = additionalData.evidence;
+
+          document.getElementById("evidenceDetails").style.display = "block";
+          document.getElementById("errorMessage").style.display = "none";
+        } else {
+          alert("Please install MetaMask to interact with the blockchain.");
+        }
+      } catch (error) {
+        console.error("Error fetching evidence details:", error);
+        document.getElementById("evidenceDetails").style.display = "none";
+        document.getElementById("errorMessage").style.display = "block";
+      }
+    });
+
+    function fetchAdditionalDetails(hashId) {
+      return {
+        name: "John Doe",
+        dob: "1990-01-01",
+        nationality: "American",
+        picture: "https://via.placeholder.com/150", // Replace with actual IPFS URL
+        nationalId: "123456789",
+        crime: "Burglary",
+        description: "Suspected of burglary in the downtown area.",
+        evidence: "Video and images uploaded."
+      };
+    }
+  </script>
+</body>
+</html>
